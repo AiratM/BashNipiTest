@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainCheckLib", "PlainCheck
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainCheckLibTests", "PlainCheckLibTests\PlainCheckLibTests.csproj", "{4DB4AA1C-45BF-4893-8B86-9304DF5539AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainCheckContracts", "PlainCheckContracts\PlainCheckContracts.csproj", "{2B146909-F676-40CF-8BC2-725BFAA9C45C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4DB4AA1C-45BF-4893-8B86-9304DF5539AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DB4AA1C-45BF-4893-8B86-9304DF5539AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DB4AA1C-45BF-4893-8B86-9304DF5539AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B146909-F676-40CF-8BC2-725BFAA9C45C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B146909-F676-40CF-8BC2-725BFAA9C45C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B146909-F676-40CF-8BC2-725BFAA9C45C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B146909-F676-40CF-8BC2-725BFAA9C45C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
