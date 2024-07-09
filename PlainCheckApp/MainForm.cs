@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +13,12 @@ namespace PlainCheckApp
 {
     public partial class MainForm : Form
     {
-        public MainForm()
+        private readonly ILogger _logger;
+        public MainForm(ILogger<MainForm> logger)
         {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             InitializeComponent();
+            _logger.LogInformation("Программа запущена");
         }
     }
 }

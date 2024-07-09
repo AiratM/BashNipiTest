@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using PlainCheckApp.Abstractions;
 using PlainCheckApp.Interfaces;
 using PlainCheckContracts.Dto;
@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PlainCheckApp.Services
@@ -24,11 +23,11 @@ namespace PlainCheckApp.Services
 
         public List<LineType> LoadLines(string sourceName)
         {
-            _logger.Info("Начало загрузки из файла");
+            _logger.LogInformation("Начало загрузки из файла");
 
             if (!IsFileExists(sourceName))
             {
-                _logger.Error($"Указанный файл {sourceName} не существует!");
+                _logger.LogError($"Указанный файл {sourceName} не существует!");
                 return null;
             }
 
@@ -41,7 +40,7 @@ namespace PlainCheckApp.Services
 
                 if (arr.Length != 4)
                 {
-                    _logger.Error("Ошибка в структуре файла");
+                    _logger.LogError("Ошибка в структуре файла");
                     return null;
                 }
                 hash.Add(new LineType
@@ -54,7 +53,7 @@ namespace PlainCheckApp.Services
             }
             catch (Exception e)
             {
-                _logger.Error($"Произошла ошибка при чтении обработке файла. {e.Message} {e.Source} {e.StackTrace}");
+                _logger.LogError($"Произошла ошибка при чтении обработке файла. {e.Message} {e.Source} {e.StackTrace}");
                 return null;
             }
             return hash.ToList();
