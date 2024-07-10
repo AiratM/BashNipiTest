@@ -10,21 +10,19 @@ using System.Threading.Tasks;
 
 namespace PlainCheckApp.Services
 {
-    internal class CsvLoader : FileLoaderBase, ILineLoader
+    public class CsvLoader : FileLoaderBase, ILineLoader
     {
         private readonly ILogger _logger;
         public char Delimeter { get; set; } = ';';
 
-        public CsvLoader(ILogger logger)
+        public CsvLoader(ILogger<CsvLoader> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        public async Task<List<LineType>> LoadLinesAsync(string sourceName) => await Task.Run(() => LoadLines(sourceName));
+        public async Task<HashSet<LineType>> LoadLinesAsync(string sourceName) => await Task.Run(() => LoadLines(sourceName));
 
-        public List<LineType> LoadLines(string sourceName)
+        public HashSet<LineType> LoadLines(string sourceName)
         {
-            _logger.LogInformation("Начало загрузки из файла");
-
             if (!IsFileExists(sourceName))
             {
                 _logger.LogError($"Указанный файл {sourceName} не существует!");
@@ -35,28 +33,31 @@ namespace PlainCheckApp.Services
             try
             {
                 using var reader = File.OpenText(sourceName);
-                string s = reader.ReadLine();
-                var arr = s.Split(Delimeter);
+                while (!reader.EndOfStream)
+                {
+                    string s = reader.ReadLine();
+                    var arr = s.Split(Delimeter);
 
-                if (arr.Length != 4)
-                {
-                    _logger.LogError("Ошибка в структуре файла");
-                    return null;
+                    if (arr.Length != 4)
+                    {
+                        _logger.LogError("Ошибка в структуре файла");
+                        return null;
+                    }
+                    hash.Add(new LineType
+                    {
+                        LineId = int.Parse(arr[0]),
+                        X1 = float.Parse(arr[1]),
+                        Y1 = float.Parse(arr[2]),
+                        PolygonId = int.Parse(arr[3]),
+                    });
                 }
-                hash.Add(new LineType
-                {
-                    LineId = int.Parse(arr[0]),
-                    X1 = int.Parse(arr[1]),
-                    Y1 = int.Parse(arr[2]),
-                    PolygonId = int.Parse(arr[3]),
-                });
             }
             catch (Exception e)
             {
                 _logger.LogError($"Произошла ошибка при чтении обработке файла. {e.Message} {e.Source} {e.StackTrace}");
                 return null;
             }
-            return hash.ToList();
+            return hash;
         }
 
 

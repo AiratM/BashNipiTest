@@ -17,12 +17,12 @@ namespace PlainCheckContracts.Dto
         /// <summary>
         /// Координата Х первой точки
         /// </summary>
-        public double X1 { get; set; }
+        public float X1 { get; set; }
 
         /// <summary>
         /// Координата У первой точки
         /// </summary>
-        public double Y1 { get; set; }
+        public float Y1 { get; set; }
 
         /// <summary>
         /// Id полигона, к которому относятся линии

@@ -21,5 +21,10 @@ namespace PlainCheckApp
             var url = linkLabel1.Text; 
             System.Diagnostics.Process.Start(url);
         }
+
+        private void buttonOk_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }

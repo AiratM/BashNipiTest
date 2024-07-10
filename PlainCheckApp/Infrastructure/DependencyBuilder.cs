@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using PlainCheckApp.Interfaces;
+using PlainCheckApp.Services;
 using Serilog;
-using Serilog.Configuration;
-using Serilog.Sinks;
 using System;
 
 namespace PlainCheckApp.Infrastructure
@@ -12,6 +12,8 @@ namespace PlainCheckApp.Infrastructure
             new ServiceCollection()
             .AddTransient<MainForm>()
             .AddTransient<AboutForm>()
+            .AddTransient<ILineLoader, CsvLoader>()
+            .AddTransient<IGraphicDraw, PngGraphicDraw>()
             .AddLogging(loggingBuilder =>
                 loggingBuilder.AddSerilog(dispose: true))
             .BuildServiceProvider();
