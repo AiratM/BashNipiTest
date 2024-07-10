@@ -8,14 +8,12 @@ namespace PlainCheckApp.Infrastructure
 {
     internal static class DependencyBuilder
     {
-        public static IServiceProvider ConfigureServices()
-        {
-
-            return new ServiceCollection()
+        public static IServiceProvider ConfigureServices() =>
+            new ServiceCollection()
             .AddTransient<MainForm>()
+            .AddTransient<AboutForm>()
             .AddLogging(loggingBuilder =>
                 loggingBuilder.AddSerilog(dispose: true))
             .BuildServiceProvider();
-        }
     }
 }

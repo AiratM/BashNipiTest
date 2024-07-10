@@ -20,5 +20,11 @@ namespace PlainCheckApp
             InitializeComponent();
             _logger.LogInformation("Программа запущена");
         }
+
+        private void menuItemAbout_Click(object sender, EventArgs e)
+        {
+            var frmAbout = (AboutForm)Program.ServiceProvider.GetService(typeof(AboutForm));
+            frmAbout.ShowDialog();
+        }
     }
 }
