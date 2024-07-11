@@ -5,11 +5,13 @@ VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainCheckApp", "PlainCheckApp\PlainCheckApp.csproj", "{B8363181-624A-4153-946F-D9465D28745A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainCheckLib", "PlainCheckLib\PlainCheckLib.csproj", "{9856C1F4-EEAE-4EC9-8ACF-AB094A91E7B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlainCheckLib", "PlainCheckLib\PlainCheckLib.csproj", "{9856C1F4-EEAE-4EC9-8ACF-AB094A91E7B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainCheckLibTests", "PlainCheckLibTests\PlainCheckLibTests.csproj", "{4DB4AA1C-45BF-4893-8B86-9304DF5539AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlainCheckLibTests", "PlainCheckLibTests\PlainCheckLibTests.csproj", "{4DB4AA1C-45BF-4893-8B86-9304DF5539AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainCheckContracts", "PlainCheckContracts\PlainCheckContracts.csproj", "{2B146909-F676-40CF-8BC2-725BFAA9C45C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlainCheckContracts", "PlainCheckContracts\PlainCheckContracts.csproj", "{2B146909-F676-40CF-8BC2-725BFAA9C45C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainCheckContractsTests", "PlainCheckContractsTests\PlainCheckContractsTests.csproj", "{95CB80E1-D6CA-43E3-A1F9-22A3ECBA7C27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{2B146909-F676-40CF-8BC2-725BFAA9C45C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B146909-F676-40CF-8BC2-725BFAA9C45C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B146909-F676-40CF-8BC2-725BFAA9C45C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95CB80E1-D6CA-43E3-A1F9-22A3ECBA7C27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95CB80E1-D6CA-43E3-A1F9-22A3ECBA7C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95CB80E1-D6CA-43E3-A1F9-22A3ECBA7C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95CB80E1-D6CA-43E3-A1F9-22A3ECBA7C27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

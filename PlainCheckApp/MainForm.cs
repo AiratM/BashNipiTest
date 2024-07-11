@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using PlainCheckApp.Interfaces;
 using PlainCheckContracts.Dto;
+using PlainCheckContracts.Interfaces;
+using PlainCheckContracts.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,6 +28,7 @@ namespace PlainCheckApp
             _lineLoader = lineLoader ?? throw new ArgumentNullException(nameof(lineLoader));
             _graphicDraw = graphicDraw ?? throw new ArgumentNullException(nameof(graphicDraw));
             InitializeComponent();
+            AddGridRows();
             _logger.LogInformation("Программа запущена");
         }
 
@@ -44,6 +47,11 @@ namespace PlainCheckApp
                 return;
             Stopwatch sw = Stopwatch.StartNew();
             var loadedData = await _lineLoader.LoadLinesAsync(openFileDialog1.FileName);
+            if (loadedData is null)
+            {
+                MessageBox.Show(_lineLoader.GetError(), "Ошибка загрузки данных");
+                return;
+            }
             var distinctedPolygonIds = loadedData.Select(q => q.PolygonId).Distinct();
             _logger.LogInformation("Данные загружены");
             listBoxLog.Items.Add($"Данные загружены {sw.ElapsedMilliseconds}");
@@ -52,43 +60,59 @@ namespace PlainCheckApp
             listBoxLog.Items.Add($"Изображение сгенерировано {sw.ElapsedMilliseconds}");
             pictureBoxMain.LoadAsync(graphicFileName);
         }
-        private async Task<bool> CalcResultsAsync()
-        {
-            listBoxLog.Items.Add("before");
-            var tasks = new[]
-            {
-                Task.Run(()=> One()),
-                Task.Run(()=> Two())
-            };
-            await Task.WhenAll(tasks);
-
-            //var t2 = One();
-            //var t3 = Two();
-            //await Task.WhenAll(t1, t2, t3);
-            listBoxLog.Items.Add($"One: {tasks[0].Result.Item1}, {tasks[0].Result.Item2}");
-            listBoxLog.Items.Add($"Two: {tasks[1].Result.Item1}, {tasks[1].Result.Item2}");
-            menuItemOpenFile.Enabled = true;
-            return true;
-        }
-
-        private async Task<(int, int)> One()
-        {
-            int i1 = Thread.CurrentThread.ManagedThreadId;
-            await Task.Delay(5000);
-            int i2 = Thread.CurrentThread.ManagedThreadId;
-            return (i1, i2);
-        }
-        private async Task<(int, int)> Two()
-        {
-            int i1 = Thread.CurrentThread.ManagedThreadId;
-            await Task.Delay(3000);
-            int i2 = Thread.CurrentThread.ManagedThreadId;
-            return (i1, i2);
-        }
 
         private void menuItem4_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void AddGridRows()
+        {
+            dataGridViewRectangle.Rows.Add(4);
+            dataGridViewRectangle[0, 0].Value = "Первая точка";
+            dataGridViewRectangle[0, 1].Value = "Вторая точка";
+            dataGridViewRectangle[0, 2].Value = "Третья точка";
+            dataGridViewRectangle[0, 3].Value = "Четвертая точка";
+            dataGridViewRectangle.AllowUserToAddRows = false;
+            dataGridViewRectangle.AllowUserToDeleteRows = false;
+        }
+
+        private void menuItemDrawRectangle_Click(object sender, EventArgs e)
+        {
+            var model = CreateRectangleModel();
+            if (model is null)
+            {
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Создание модели прямоугольника
+        /// </summary>
+        /// <returns>Модель прямоугольника в случае успешного выполнения, иначе null</returns>
+        private RectangleModel CreateRectangleModel()
+        {
+            try
+            {
+                var dots = new List<DotModel>(4);
+                for (int i = 0; i<4; i++)
+                {
+                    dots.Add(new DotModel {
+                        X = float.Parse(dataGridViewRectangle[1, i].Value.ToString()),
+                        Y = float.Parse(dataGridViewRectangle[2, i].Value.ToString()),
+                    });
+                }
+               
+                var model = new RectangleModel(dots);
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Произошла ошибка при чтении обработке файла. {e.Message} {e.Source} {e.StackTrace}");
+                return null;
+            }
+
         }
     }
 }

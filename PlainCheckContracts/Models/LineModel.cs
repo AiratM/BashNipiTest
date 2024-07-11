@@ -5,9 +5,9 @@ using System.Text;
 namespace PlainCheckContracts.Dto
 {
     /// <summary>
-    /// DTO линии
+    /// Модель линии
     /// </summary>
-    public class LineType
+    public class LineModel
     {
         /// <summary>
         /// Id линии

@@ -17,6 +17,12 @@ namespace PlainCheckApp.Interfaces
         /// </summary>
         /// <param name="sourceName">Наименование источника данных</param>
         /// <returns>Коллекция линиий</returns>
-        Task<HashSet<LineType>> LoadLinesAsync(string sourceName);
+        Task<HashSet<LineModel>> LoadLinesAsync(string sourceName);
+
+        /// <summary>
+        /// Получение ошибки загрузки
+        /// </summary>
+        /// <returns>Текст ошибки</returns>
+        public string GetError();
     }
 }

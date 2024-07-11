@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PlainCheckApp.Interfaces;
 using PlainCheckApp.Services;
+using PlainCheckContracts.Interfaces;
+using PlainCheckLib.Implementations;
 using Serilog;
 using System;
 

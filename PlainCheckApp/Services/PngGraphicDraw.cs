@@ -20,14 +20,16 @@ namespace PlainCheckApp.Services
 
         public PngGraphicDraw()
         {
-            _lineColors = new List<Color> { Color.DarkSlateBlue, Color.DarkKhaki, Color.DeepPink, Color.Brown, Color.Black, Color.DarkSeaGreen, Color.DeepPink, Color.DimGray };
+            _lineColors = new List<Color> { Color.BlueViolet, Color.DarkKhaki, Color.DeepPink, Color.Brown, Color.Black, Color.DarkSeaGreen, Color.DeepPink, Color.DimGray };
 
         }
-        public async Task<string> CreateImageAsync(HashSet<LineType> lines)
+        public async Task<string> CreateImageAsync(HashSet<LineModel> lines) => await Task.Run(() => CreateImage(lines));
+
+        public string CreateImage(HashSet<LineModel> lines)
         {
             Bitmap bitmap = new Bitmap(BITMAP_WIDTH * SCALE, BITMAP_HEIGHT * SCALE, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
             Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.Clear(Color.AntiqueWhite);
+            graphics.Clear(Color.BlanchedAlmond);
             var first = lines.First();
             long currentPolygon = first.PolygonId;
             float x1 = first.X1 * SCALE;

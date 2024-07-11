@@ -13,23 +13,36 @@ namespace PlainCheckApp.Services
     public class CsvLoader : FileLoaderBase, ILineLoader
     {
         private readonly ILogger _logger;
+
+        /// <summary>
+        /// Ошибка выполнения загрузки
+        /// </summary>
+        private string _error;
+
+        /// <summary>
+        /// Разделитель для значений в файле csv
+        /// </summary>
         public char Delimeter { get; set; } = ';';
 
         public CsvLoader(ILogger<CsvLoader> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        public async Task<HashSet<LineType>> LoadLinesAsync(string sourceName) => await Task.Run(() => LoadLines(sourceName));
 
-        public HashSet<LineType> LoadLines(string sourceName)
+        public string GetError() => _error;
+
+        public async Task<HashSet<LineModel>> LoadLinesAsync(string sourceName) => await Task.Run(() => LoadLines(sourceName));
+
+        public HashSet<LineModel> LoadLines(string sourceName)
         {
             if (!IsFileExists(sourceName))
             {
-                _logger.LogError($"Указанный файл {sourceName} не существует!");
+                _error = $"Указанный файл {sourceName} не существует!";
+                _logger.LogError(_error);
                 return null;
             }
 
-            var hash = new HashSet<LineType>();
+            var hash = new HashSet<LineModel>();
             try
             {
                 using var reader = File.OpenText(sourceName);
@@ -40,10 +53,11 @@ namespace PlainCheckApp.Services
 
                     if (arr.Length != 4)
                     {
-                        _logger.LogError("Ошибка в структуре файла");
+                        _error = "Ошибка в структуре файла";
+                        _logger.LogError(_error);
                         return null;
                     }
-                    hash.Add(new LineType
+                    hash.Add(new LineModel
                     {
                         LineId = int.Parse(arr[0]),
                         X1 = float.Parse(arr[1]),
@@ -54,6 +68,7 @@ namespace PlainCheckApp.Services
             }
             catch (Exception e)
             {
+                _error = $"Произошла ошибка при чтении обработке файла. {e.Message}";
                 _logger.LogError($"Произошла ошибка при чтении обработке файла. {e.Message} {e.Source} {e.StackTrace}");
                 return null;
             }

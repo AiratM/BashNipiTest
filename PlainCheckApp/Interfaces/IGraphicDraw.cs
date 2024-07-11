@@ -14,10 +14,10 @@ namespace PlainCheckApp.Interfaces
     public interface IGraphicDraw
     {
         /// <summary>
-        /// Создание изображения по заданным точкам
+        /// Создание изображения по заданным точкам линии
         /// </summary>
         /// <param name="lines">Массив линий</param>
         /// <returns>Имя файла с изображением</returns>
-        public Task<string> CreateImageAsync(HashSet<LineType> lines);
+        public Task<string> CreateImageAsync(HashSet<LineModel> lines);
     }
 }
