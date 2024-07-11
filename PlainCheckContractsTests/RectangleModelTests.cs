@@ -112,6 +112,36 @@ namespace PlainCheckContractsTests
             Assert.That(model.IsRectangle == false);
         }
 
+        [Test]
+        public void RectangleValidateTopCoordsTest()
+        {
+            var dots = new List<DotModel>
+            {
+                new DotModel
+                {
+                    X = 100, Y = 10
+                },
+                new DotModel
+                {
+                    X = 100, Y = 800
+                },
+                new DotModel
+                {
+                    X = 900, Y = 10
+                },
+                new DotModel
+                {
+                    X = 900, Y = 800
+                },
+            };
+
+            var model = new RectangleModel(dots);
+            Assert.That(model.LeftX == 100);
+            Assert.That(model.RightX == 900);
+            Assert.That(model.BottomY == 10);
+            Assert.That(model.TopY == 800);
+        }
+
         private static readonly object[] _positiveSortedSourceLists = new object[]
         {
             new List<DotModel>

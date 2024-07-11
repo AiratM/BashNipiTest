@@ -31,14 +31,30 @@ namespace PlainCheckContracts.Dto
         public DotModel BottomRightDot { get; set; }
 
         /// <summary>
+        /// Самая левая точка по оси Х
+        /// </summary>
+        public float LeftX { get; private set; }
+
+        /// <summary>
+        /// Самая правая точка по оси Х
+        /// </summary>
+        public float RightX { get; private set; }
+
+        /// <summary>
+        /// Самая нижняя точка по оси Y
+        /// </summary>
+        public float BottomY { get; private set; }
+
+        /// <summary>
+        /// Самая верхняя точка по оси Y
+        /// </summary>
+        public float TopY { get; private set; }
+
+        /// <summary>
         /// Является ли прямоугольником
         /// </summary>
         public bool IsRectangle { get; private set; }
 
-        /// <summary>
-        /// Является ли параллельным осям координат
-        /// </summary>
-        public bool IsNormalized { get; private set; }
         /// <summary>
         /// Конструктор модели прямоугольника
         /// </summary>
@@ -104,6 +120,10 @@ namespace PlainCheckContracts.Dto
                 TopLeftDot = (DotModel)sortedDots[3].Clone();
                 TopRightDot = (DotModel)sortedDots[2].Clone();
             }
+            LeftX = TopLeftDot.X < BottomLeftDot.X ? TopLeftDot.X : BottomLeftDot.X;
+            RightX = TopRightDot.X > BottomRightDot.X ? TopRightDot.X : BottomRightDot.X;
+            BottomY = BottomLeftDot.Y < BottomRightDot.Y ? BottomLeftDot.Y : BottomRightDot.Y;
+            TopY = TopRightDot.Y > TopLeftDot.Y ? TopRightDot.Y : TopLeftDot.Y;
         }
 
         /// <summary>
@@ -125,13 +145,5 @@ namespace PlainCheckContracts.Dto
         /// <returns>Длина</returns>
         private double LineLength(DotModel dot1, DotModel dot2) => Math.Sqrt(Math.Pow((dot2.X - dot1.X), 2) + Math.Pow((dot2.Y - dot1.Y), 2));
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        private bool CheckIsNormalized()
-        {
-            return true;
-        }
     }
 }

@@ -14,7 +14,6 @@ namespace PlainCheckApp.Services
         private List<Color> _lineColors;
         private int _currentColorIndex = 0;
         private const int MAX_COLORS = 8;
-        private const int SCALE = 1;
         private const int BITMAP_HEIGHT = 1000;
         private const int BITMAP_WIDTH = 1000;
         private Pen _lineIntersectPen = new Pen(Color.Black, 2);
@@ -34,33 +33,32 @@ namespace PlainCheckApp.Services
         public string CreateImage(HashSet<LineModel> lines, RectangleModel rectangle)
         {
             _currentColorIndex = 0;
-            Bitmap bitmap = new Bitmap(BITMAP_WIDTH * SCALE, BITMAP_HEIGHT * SCALE, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            Bitmap bitmap = new Bitmap(BITMAP_WIDTH, BITMAP_HEIGHT, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
             Graphics graphics = Graphics.FromImage(bitmap);
             graphics.Clear(Color.White);
             var first = lines.First();
             long currentPolygon = first.PolygonId;
-            float x1 = first.Dot.X * SCALE;
-            float y1 = first.Dot.Y * SCALE;
-            float firstX1 = x1;
-            float firstY1 = y1;
+            var firstDot = first.Dot;
+            var prevDot = first.Dot;
             Pen pen = new Pen(GetNextColor(), 1);
             foreach (var line in lines.Skip(1))
             {
                 if (line.PolygonId != currentPolygon)
                 {
                     currentPolygon = line.PolygonId;
-                    graphics.DrawLine(pen, x1, y1, firstX1, firstY1);
-                    firstX1 = line.Dot.X * SCALE;
-                    firstY1 = line.Dot.Y * SCALE;
-                    x1 = firstX1;
-                    y1 = firstY1;
+                    graphics.DrawLine(pen, prevDot.X, prevDot.Y, firstDot.X, firstDot.Y);
+                    firstDot = line.Dot;
+                    prevDot = line.Dot;
+                    
                     pen = new Pen(GetNextColor(), 1);
                 }
-                graphics.DrawLine(pen, x1, y1, line.Dot.X * SCALE, line.Dot.Y * SCALE);
-                x1 = line.Dot.X * SCALE;
-                y1 = line.Dot.Y * SCALE;
+
+                graphics.DrawLine(pen, prevDot.X, prevDot.Y, line.Dot.X, line.Dot.Y );
+                prevDot = line.Dot;
+                //x1 = line.Dot.X * SCALE;
+                //y1 = line.Dot.Y * SCALE;
             }
-            graphics.DrawLine(pen, x1, y1, firstX1, firstY1);
+            graphics.DrawLine(pen, prevDot.X, prevDot.Y, firstDot.X, firstDot.Y);
 
             graphics.DrawLine(_rectanglePen, rectangle.BottomLeftDot.X, rectangle.BottomLeftDot.Y, rectangle.BottomRightDot.X, rectangle.BottomRightDot.Y);
             graphics.DrawLine(_rectanglePen, rectangle.BottomRightDot.X, rectangle.BottomRightDot.Y, rectangle.TopRightDot.X, rectangle.TopRightDot.Y);
@@ -74,13 +72,13 @@ namespace PlainCheckApp.Services
         public string CreateImage(HashSet<LineModel> lines)
         {
             _currentColorIndex = 0;
-            Bitmap bitmap = new Bitmap(BITMAP_WIDTH * SCALE, BITMAP_HEIGHT * SCALE, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            Bitmap bitmap = new Bitmap(BITMAP_WIDTH , BITMAP_HEIGHT, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
             Graphics graphics = Graphics.FromImage(bitmap);
             graphics.Clear(Color.BlanchedAlmond);
             var first = lines.First();
             long currentPolygon = first.PolygonId;
-            float x1 = first.Dot.X * SCALE;
-            float y1 = first.Dot.Y * SCALE;
+            float x1 = first.Dot.X;
+            float y1 = first.Dot.Y ;
             float firstX1 = x1;
             float firstY1 = y1;
             Pen pen = new Pen(GetNextColor(), 1);
@@ -90,15 +88,15 @@ namespace PlainCheckApp.Services
                 {
                     currentPolygon = line.PolygonId;
                     graphics.DrawLine(pen, x1, y1, firstX1, firstY1);
-                    firstX1 = line.Dot.X * SCALE;
-                    firstY1 = line.Dot.Y * SCALE;
+                    firstX1 = line.Dot.X;
+                    firstY1 = line.Dot.Y ;
                     x1 = firstX1;
                     y1 = firstY1;
                     pen = new Pen(GetNextColor(), 1);
                 }
-                graphics.DrawLine(pen, x1, y1, line.Dot.X * SCALE, line.Dot.Y * SCALE);
-                x1 = line.Dot.X * SCALE;
-                y1 = line.Dot.Y * SCALE;
+                graphics.DrawLine(pen, x1, y1, line.Dot.X, line.Dot.Y);
+                x1 = line.Dot.X;
+                y1 = line.Dot.Y;
             }
             graphics.DrawLine(pen, x1, y1, firstX1, firstY1);
 
