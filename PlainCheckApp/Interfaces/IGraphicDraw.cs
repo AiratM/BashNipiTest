@@ -19,5 +19,13 @@ namespace PlainCheckApp.Interfaces
         /// <param name="lines">Массив линий</param>
         /// <returns>Имя файла с изображением</returns>
         public Task<string> CreateImageAsync(HashSet<LineModel> lines);
+
+        /// <summary>
+        /// Создание изображения по заданным точкам и отрисовка указанного прямоугольника
+        /// </summary>
+        /// <param name="lines">Массив линий</param>
+        /// <param name="rectangle">Модель прямоугольника</param>
+        /// <returns>Имя файла с изображением</returns>
+        public Task<string> CreateImageAsync(HashSet<LineModel> lines, RectangleModel rectangle);
     }
 }

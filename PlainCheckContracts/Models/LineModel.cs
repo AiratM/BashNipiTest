@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlainCheckContracts.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,14 +16,9 @@ namespace PlainCheckContracts.Dto
         public long LineId { get; set; }
 
         /// <summary>
-        /// Координата Х первой точки
+        /// Координата следующей точки
         /// </summary>
-        public float X1 { get; set; }
-
-        /// <summary>
-        /// Координата У первой точки
-        /// </summary>
-        public float Y1 { get; set; }
+        public DotModel Dot { get; set; }
 
         /// <summary>
         /// Id полигона, к которому относятся линии

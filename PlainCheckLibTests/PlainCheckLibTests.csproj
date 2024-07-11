@@ -18,6 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PlainCheckContracts\PlainCheckContracts.csproj" />
+    <ProjectReference Include="..\PlainCheckLib\PlainCheckLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 

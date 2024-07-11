@@ -2,6 +2,7 @@
 using PlainCheckApp.Abstractions;
 using PlainCheckApp.Interfaces;
 using PlainCheckContracts.Dto;
+using PlainCheckContracts.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,8 +61,11 @@ namespace PlainCheckApp.Services
                     hash.Add(new LineModel
                     {
                         LineId = int.Parse(arr[0]),
-                        X1 = float.Parse(arr[1]),
-                        Y1 = float.Parse(arr[2]),
+                        Dot = new DotModel
+                        {
+                            X = float.Parse(arr[1]),
+                            Y = float.Parse(arr[2]),
+                        },
                         PolygonId = int.Parse(arr[3]),
                     });
                 }

@@ -31,6 +31,15 @@ namespace PlainCheckContracts.Dto
         public DotModel BottomRightDot { get; set; }
 
         /// <summary>
+        /// Является ли прямоугольником
+        /// </summary>
+        public bool IsRectangle { get; private set; }
+
+        /// <summary>
+        /// Является ли параллельным осям координат
+        /// </summary>
+        public bool IsNormalized { get; private set; }
+        /// <summary>
         /// Конструктор модели прямоугольника
         /// </summary>
         /// <param name="dots">4 вершины</param>
@@ -41,8 +50,8 @@ namespace PlainCheckContracts.Dto
                 throw new ArgumentException(nameof(dots));
             }
             SetVertex(dots.OrderBy(q => q.Y).ToList());
-            if (!IsRectangle())
-                throw new Exception("Фигура не является прямоугольником");
+
+            IsRectangle = CheckIsRectangle();
         }
 
         /// <summary>
@@ -102,18 +111,27 @@ namespace PlainCheckContracts.Dto
         /// Условие соответствия: противоположные стороны и диагонали должны быть равны
         /// </summary>
         /// <returns>true - прямоугольник</returns>
-        private bool IsRectangle() =>
+        private bool CheckIsRectangle() =>
             (LineLength(BottomLeftDot, TopLeftDot) == LineLength(TopRightDot, BottomRightDot)) &&
                 (LineLength(TopLeftDot, TopRightDot) == LineLength(BottomLeftDot, BottomRightDot)) &&
                     (LineLength(TopLeftDot, BottomRightDot) == LineLength(BottomLeftDot, TopRightDot));
 
 
         /// <summary>
-        /// Вычисление 
+        /// Вычисление длины отрезка по координатам двух точек
         /// </summary>
-        /// <param name="dot1"></param>
-        /// <param name="dot2"></param>
-        /// <returns></returns>
+        /// <param name="dot1">Точка 1</param>
+        /// <param name="dot2">Точка 2</param>
+        /// <returns>Длина</returns>
         private double LineLength(DotModel dot1, DotModel dot2) => Math.Sqrt(Math.Pow((dot2.X - dot1.X), 2) + Math.Pow((dot2.Y - dot1.Y), 2));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckIsNormalized()
+        {
+            return true;
+        }
     }
 }
