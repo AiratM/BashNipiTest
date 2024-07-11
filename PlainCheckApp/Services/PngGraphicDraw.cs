@@ -18,21 +18,20 @@ namespace PlainCheckApp.Services
         private const int BITMAP_WIDTH = 1000;
         private Pen _lineIntersectPen = new Pen(Color.Black, 2);
         private Pen _rectanglePen = new Pen(Color.OrangeRed, 1);
-        private readonly ILineIntersect _lineIntersect;
+        private readonly IRectangleIntersect _rectangleIntersect;
 
-        public PngGraphicDraw(ILineIntersect lineIntersect)
+        public PngGraphicDraw(IRectangleIntersect rectangleIntersect)
         {
-            _lineIntersect = lineIntersect ?? throw new ArgumentNullException();
+            _rectangleIntersect = rectangleIntersect ?? throw new ArgumentNullException(nameof(rectangleIntersect));
             _lineColors = new List<Color> { Color.BlueViolet, Color.DarkKhaki, Color.DeepPink, Color.Brown, Color.Black, Color.DarkSeaGreen, Color.DeepPink, Color.DimGray };
 
         }
         public async Task<string> CreateImageAsync(HashSet<LineModel> lines) => await Task.Run(() => CreateImage(lines));
 
-        public async Task<string> CreateImageAsync(HashSet<LineModel> lines, RectangleModel rectangle) => await Task.Run(() => CreateImage(lines, rectangle));
-
-        public string CreateImage(HashSet<LineModel> lines, RectangleModel rectangle)
+        public async Task<string> CreateImageAsync(HashSet<LineModel> lines, RectangleModel rectangle)
         {
             _currentColorIndex = 0;
+            Pen drawedPen;
             Bitmap bitmap = new Bitmap(BITMAP_WIDTH, BITMAP_HEIGHT, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
             Graphics graphics = Graphics.FromImage(bitmap);
             graphics.Clear(Color.White);
@@ -46,19 +45,19 @@ namespace PlainCheckApp.Services
                 if (line.PolygonId != currentPolygon)
                 {
                     currentPolygon = line.PolygonId;
-                    graphics.DrawLine(pen, prevDot.X, prevDot.Y, firstDot.X, firstDot.Y);
+                    drawedPen = (await _rectangleIntersect.CheckLineRectangleIntersectAsync(rectangle, prevDot, firstDot)) ? _lineIntersectPen : pen;
+                    graphics.DrawLine(drawedPen, prevDot.X, prevDot.Y, firstDot.X, firstDot.Y);
                     firstDot = line.Dot;
                     prevDot = line.Dot;
                     
                     pen = new Pen(GetNextColor(), 1);
                 }
-
-                graphics.DrawLine(pen, prevDot.X, prevDot.Y, line.Dot.X, line.Dot.Y );
+                drawedPen = (await _rectangleIntersect.CheckLineRectangleIntersectAsync(rectangle, prevDot, line.Dot)) ? _lineIntersectPen : pen;
+                graphics.DrawLine(drawedPen, prevDot.X, prevDot.Y, line.Dot.X, line.Dot.Y );
                 prevDot = line.Dot;
-                //x1 = line.Dot.X * SCALE;
-                //y1 = line.Dot.Y * SCALE;
             }
-            graphics.DrawLine(pen, prevDot.X, prevDot.Y, firstDot.X, firstDot.Y);
+            drawedPen = (await _rectangleIntersect.CheckLineRectangleIntersectAsync(rectangle, prevDot, firstDot)) ? _lineIntersectPen : pen;
+            graphics.DrawLine(drawedPen, prevDot.X, prevDot.Y, firstDot.X, firstDot.Y);
 
             graphics.DrawLine(_rectanglePen, rectangle.BottomLeftDot.X, rectangle.BottomLeftDot.Y, rectangle.BottomRightDot.X, rectangle.BottomRightDot.Y);
             graphics.DrawLine(_rectanglePen, rectangle.BottomRightDot.X, rectangle.BottomRightDot.Y, rectangle.TopRightDot.X, rectangle.TopRightDot.Y);

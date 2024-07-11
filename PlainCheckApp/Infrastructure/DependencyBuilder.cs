@@ -17,6 +17,7 @@ namespace PlainCheckApp.Infrastructure
             .AddTransient<ILineLoader, CsvLoader>()
             .AddTransient<IGraphicDraw, PngGraphicDraw>()
             .AddTransient<ILineIntersect,LineIntersect>()
+            .AddTransient<IRectangleIntersect, RectangleIntersect>()
             .AddLogging(loggingBuilder =>
                 loggingBuilder.AddSerilog(dispose: true))
             .BuildServiceProvider();
