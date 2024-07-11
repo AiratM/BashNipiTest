@@ -22,6 +22,7 @@ namespace PlainCheckApp
         private readonly ILogger _logger;
         private readonly ILineLoader _lineLoader;
         private readonly IGraphicDraw _graphicDraw;
+        private HashSet<LineModel> _loadedData;
         public MainForm(ILogger<MainForm> logger, ILineLoader lineLoader, IGraphicDraw graphicDraw)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -46,16 +47,15 @@ namespace PlainCheckApp
             if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
                 return;
             Stopwatch sw = Stopwatch.StartNew();
-            var loadedData = await _lineLoader.LoadLinesAsync(openFileDialog1.FileName);
-            if (loadedData is null)
+            _loadedData = await _lineLoader.LoadLinesAsync(openFileDialog1.FileName);
+            if (_loadedData is null)
             {
                 MessageBox.Show(_lineLoader.GetError(), "Ошибка загрузки данных");
                 return;
             }
-            var distinctedPolygonIds = loadedData.Select(q => q.PolygonId).Distinct();
             _logger.LogInformation("Данные загружены");
             listBoxLog.Items.Add($"Данные загружены {sw.ElapsedMilliseconds}");
-            string graphicFileName = await _graphicDraw.CreateImageAsync(loadedData);
+            string graphicFileName = await _graphicDraw.CreateImageAsync(_loadedData);
             sw.Stop();
             listBoxLog.Items.Add($"Изображение сгенерировано {sw.ElapsedMilliseconds}");
             pictureBoxMain.LoadAsync(graphicFileName);
@@ -77,14 +77,20 @@ namespace PlainCheckApp
             dataGridViewRectangle.AllowUserToDeleteRows = false;
         }
 
-        private void menuItemDrawRectangle_Click(object sender, EventArgs e)
+        private async void menuItemDrawRectangle_Click(object sender, EventArgs e)
         {
-            var model = CreateRectangleModel();
-            if (model is null)
+            Stopwatch sw = Stopwatch.StartNew();
+            var rectangleModel = CreateRectangleModel();
+            if (rectangleModel is null)
             {
                 return;
             }
+            string graphicFileName = await _graphicDraw.CreateImageAsync(_loadedData, rectangleModel);
+            pictureBoxMain.LoadAsync(graphicFileName);
+            sw.Stop();
+            listBoxLog.Items.Add($"Изображение обработано {sw.ElapsedMilliseconds}");
             
+
         }
 
         /// <summary>
@@ -106,7 +112,7 @@ namespace PlainCheckApp
                
                 var model = new RectangleModel(dots);
 
-                return null;
+                return model;
             }
             catch (Exception e)
             {

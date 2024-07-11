@@ -8,8 +8,8 @@ namespace PlainCheckContracts.Interfaces
     /// <summary>
     /// Основная проверка
     /// </summary>
-    public interface IPlaneCheck
+    public interface IRectangleIntersect
     {
-        Task<bool> CheckLinesAsync();
+        Task<bool> CheckLineRectangleIntersectAsync();
     }
 }
