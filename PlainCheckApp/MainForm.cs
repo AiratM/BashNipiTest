@@ -79,13 +79,38 @@ namespace PlainCheckApp
 
         private async void menuItemDrawRectangle_Click(object sender, EventArgs e)
         {
+            if (_loadedData is null)
+            {
+                MessageBox.Show("Необходимо загрузить данные");
+                return;
+            }
             Stopwatch sw = Stopwatch.StartNew();
-            var rectangleModel = CreateRectangleModel();
+            var dots = new List<DotModel>(4);
+            for (int i = 0; i < 4; i++)
+            {
+                if (dataGridViewRectangle[1, i].Value is null || dataGridViewRectangle[2, i].Value is null)
+                {
+                    MessageBox.Show("Не указана координата точки.");
+                    return;
+                }
+                dots.Add(new DotModel
+                {
+                    X = float.Parse(dataGridViewRectangle[1, i].Value.ToString()),
+                    Y = float.Parse(dataGridViewRectangle[2, i].Value.ToString()),
+                });
+            }
+            var rectangleModel = CreateRectangleModel(dots);
             if (rectangleModel is null)
             {
+                MessageBox.Show($"Ошибка создания модели прямоугольника {rectangleModel.GetErrors()}");
                 return;
             }
             string graphicFileName = await _graphicDraw.CreateImageAsync(_loadedData, rectangleModel);
+            if (string.IsNullOrEmpty(graphicFileName))
+            {
+                MessageBox.Show("Ошибка при отрисовке расчитанных данных.");
+                return;
+            }
             pictureBoxMain.LoadAsync(graphicFileName);
             sw.Stop();
             listBoxLog.Items.Add($"Изображение обработано {sw.ElapsedMilliseconds}");
@@ -97,19 +122,10 @@ namespace PlainCheckApp
         /// Создание модели прямоугольника
         /// </summary>
         /// <returns>Модель прямоугольника в случае успешного выполнения, иначе null</returns>
-        private RectangleModel CreateRectangleModel()
+        private RectangleModel CreateRectangleModel(List<DotModel> dots)
         {
             try
             {
-                var dots = new List<DotModel>(4);
-                for (int i = 0; i<4; i++)
-                {
-                    dots.Add(new DotModel {
-                        X = float.Parse(dataGridViewRectangle[1, i].Value.ToString()),
-                        Y = float.Parse(dataGridViewRectangle[2, i].Value.ToString()),
-                    });
-                }
-               
                 var model = new RectangleModel(dots);
 
                 return model;

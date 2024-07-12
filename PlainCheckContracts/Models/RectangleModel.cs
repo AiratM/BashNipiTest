@@ -55,6 +55,13 @@ namespace PlainCheckContracts.Dto
         /// </summary>
         public bool IsRectangle { get; private set; }
 
+        public string GetErrors() => _error;
+
+        /// <summary>
+        /// Ошибка работы с моделью
+        /// </summary>
+        private string _error;
+
         /// <summary>
         /// Конструктор модели прямоугольника
         /// </summary>
@@ -79,16 +86,19 @@ namespace PlainCheckContracts.Dto
         {
             if (dots is null)
             {
+                _error = "Не указана коллекция точек";
                 return false;
             }
             if (dots.Count != 4)
             {
+                _error = "Указано не 4 точки";
                 return false;
             }
 
             var comparer = new DotModelComparer();
             if (dots.Distinct(comparer).Count() != 4)
             {
+                _error = "В указанных точках есть одинаковые";
                 return false;
             }
             return true;
