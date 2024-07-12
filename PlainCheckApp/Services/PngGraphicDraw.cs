@@ -1,4 +1,5 @@
-﻿using PlainCheckApp.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using PlainCheckApp.Interfaces;
 using PlainCheckContracts.Dto;
 using PlainCheckContracts.Interfaces;
 using System;
@@ -19,10 +20,12 @@ namespace PlainCheckApp.Services
         private Pen _lineIntersectPen = new Pen(Color.Black, 2);
         private Pen _rectanglePen = new Pen(Color.OrangeRed, 1);
         private readonly IRectangleIntersect _rectangleIntersect;
+        private readonly ILogger _logger;
 
-        public PngGraphicDraw(IRectangleIntersect rectangleIntersect)
+        public PngGraphicDraw(IRectangleIntersect rectangleIntersect, ILogger<PngGraphicDraw> logger)
         {
             _rectangleIntersect = rectangleIntersect ?? throw new ArgumentNullException(nameof(rectangleIntersect));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _lineColors = new List<Color> { Color.BlueViolet, Color.DarkKhaki, Color.DeepPink, Color.Brown, Color.Black, Color.DarkSeaGreen, Color.DeepPink, Color.DimGray };
 
         }
@@ -30,43 +33,51 @@ namespace PlainCheckApp.Services
 
         public async Task<string> CreateImageAsync(HashSet<LineModel> lines, RectangleModel rectangle)
         {
-            _currentColorIndex = 0;
-            Pen drawedPen;
-            Bitmap bitmap = new Bitmap(BITMAP_WIDTH, BITMAP_HEIGHT, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-            Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.Clear(Color.White);
-            var first = lines.First();
-            long currentPolygon = first.PolygonId;
-            var firstDot = first.Dot;
-            var prevDot = first.Dot;
-            Pen pen = new Pen(GetNextColor(), 1);
-            foreach (var line in lines.Skip(1))
+            try
             {
-                if (line.PolygonId != currentPolygon)
+                _currentColorIndex = 0;
+                Pen drawedPen;
+                Bitmap bitmap = new Bitmap(BITMAP_WIDTH, BITMAP_HEIGHT, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                Graphics graphics = Graphics.FromImage(bitmap);
+                graphics.Clear(Color.White);
+                var first = lines.First();
+                long currentPolygon = first.PolygonId;
+                var firstDot = first.Dot;
+                var prevDot = first.Dot;
+                Pen pen = new Pen(GetNextColor(), 1);
+                foreach (var line in lines.Skip(1))
                 {
-                    currentPolygon = line.PolygonId;
-                    drawedPen = (await _rectangleIntersect.CheckLineRectangleIntersectAsync(rectangle, prevDot, firstDot)) ? _lineIntersectPen : pen;
-                    graphics.DrawLine(drawedPen, prevDot.X, prevDot.Y, firstDot.X, firstDot.Y);
-                    firstDot = line.Dot;
+                    if (line.PolygonId != currentPolygon)
+                    {
+                        currentPolygon = line.PolygonId;
+                        drawedPen = (await _rectangleIntersect.CheckLineRectangleIntersectAsync(rectangle, prevDot, firstDot)) ? _lineIntersectPen : pen;
+                        graphics.DrawLine(drawedPen, prevDot.X, prevDot.Y, firstDot.X, firstDot.Y);
+                        firstDot = line.Dot;
+                        prevDot = line.Dot;
+
+                        pen = new Pen(GetNextColor(), 1);
+                    }
+                    drawedPen = (await _rectangleIntersect.CheckLineRectangleIntersectAsync(rectangle, prevDot, line.Dot)) ? _lineIntersectPen : pen;
+                    graphics.DrawLine(drawedPen, prevDot.X, prevDot.Y, line.Dot.X, line.Dot.Y);
                     prevDot = line.Dot;
-                    
-                    pen = new Pen(GetNextColor(), 1);
                 }
-                drawedPen = (await _rectangleIntersect.CheckLineRectangleIntersectAsync(rectangle, prevDot, line.Dot)) ? _lineIntersectPen : pen;
-                graphics.DrawLine(drawedPen, prevDot.X, prevDot.Y, line.Dot.X, line.Dot.Y );
-                prevDot = line.Dot;
+                drawedPen = (await _rectangleIntersect.CheckLineRectangleIntersectAsync(rectangle, prevDot, firstDot)) ? _lineIntersectPen : pen;
+                graphics.DrawLine(drawedPen, prevDot.X, prevDot.Y, firstDot.X, firstDot.Y);
+
+                graphics.DrawLine(_rectanglePen, rectangle.BottomLeftDot.X, rectangle.BottomLeftDot.Y, rectangle.BottomRightDot.X, rectangle.BottomRightDot.Y);
+                graphics.DrawLine(_rectanglePen, rectangle.BottomRightDot.X, rectangle.BottomRightDot.Y, rectangle.TopRightDot.X, rectangle.TopRightDot.Y);
+                graphics.DrawLine(_rectanglePen, rectangle.TopRightDot.X, rectangle.TopRightDot.Y, rectangle.TopLeftDot.X, rectangle.TopLeftDot.Y);
+                graphics.DrawLine(_rectanglePen, rectangle.BottomLeftDot.X, rectangle.BottomLeftDot.Y, rectangle.TopLeftDot.X, rectangle.TopLeftDot.Y);
+
+                string fileName = Environment.CurrentDirectory + "\\DrawCalculatedLines.png";
+                bitmap.Save(fileName);
+                return fileName;
             }
-            drawedPen = (await _rectangleIntersect.CheckLineRectangleIntersectAsync(rectangle, prevDot, firstDot)) ? _lineIntersectPen : pen;
-            graphics.DrawLine(drawedPen, prevDot.X, prevDot.Y, firstDot.X, firstDot.Y);
-
-            graphics.DrawLine(_rectanglePen, rectangle.BottomLeftDot.X, rectangle.BottomLeftDot.Y, rectangle.BottomRightDot.X, rectangle.BottomRightDot.Y);
-            graphics.DrawLine(_rectanglePen, rectangle.BottomRightDot.X, rectangle.BottomRightDot.Y, rectangle.TopRightDot.X, rectangle.TopRightDot.Y);
-            graphics.DrawLine(_rectanglePen, rectangle.TopRightDot.X, rectangle.TopRightDot.Y, rectangle.TopLeftDot.X, rectangle.TopLeftDot.Y);
-            graphics.DrawLine(_rectanglePen, rectangle.BottomLeftDot.X, rectangle.BottomLeftDot.Y, rectangle.TopLeftDot.X, rectangle.TopLeftDot.Y);
-
-            string fileName = Environment.CurrentDirectory + "\\DrawCalculatedLines.png";
-            bitmap.Save(fileName);
-            return fileName;
+            catch (Exception e)
+            {
+                _logger.LogError($"Ошибка при отрисовке расчитанных данных. {e.Message} {e.Source} {e.StackTrace}");
+                return null;
+            }
         }
         public string CreateImage(HashSet<LineModel> lines)
         {
